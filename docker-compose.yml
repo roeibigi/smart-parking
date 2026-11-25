@@ -1,0 +1,31 @@
+services:
+  redis:
+    image: redis:7.4-alpine
+    # appendonly = save every change to disk, so data survives a restart
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - parking-net
+
+  api:
+    build: ./api
+    depends_on:
+      - redis
+    networks:
+      - parking-net
+
+  web:
+    build: ./web
+    ports:
+      - "8080:80"   # the only port open to the outside: http://localhost:8080
+    depends_on:
+      - api
+    networks:
+      - parking-net
+
+volumes:
+  redis-data:
+
+networks:
+  parking-net:

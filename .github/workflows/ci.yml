@@ -1,0 +1,27 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Build and start the 3 containers
+        run: docker compose up -d --build
+
+      - name: Run the tests
+        run: bash scripts/test.sh
+
+      - name: Check the data survives down + up
+        run: |
+          docker compose down
+          docker compose up -d
+          for i in $(seq 1 30); do curl -sf http://localhost:8080/api/status > /dev/null && break; sleep 1; done
+          curl -sf http://localhost:8080/api/status | grep '"plate"'
+
+      - name: Show logs if something failed
+        if: failure()
+        run: docker compose logs

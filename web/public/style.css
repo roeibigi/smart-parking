@@ -1,0 +1,39 @@
+body {
+  font-family: system-ui, Arial, sans-serif;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 16px;
+  background: #f4f6fb;
+  color: #1d2433;
+}
+
+.cards {
+  display: flex;
+  gap: 16px;
+}
+
+.card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: white;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  unicode-bidi: plaintext; /* keeps numbers readable inside Hebrew text */
+}
+
+.error {
+  color: #c62828;
+}
