@@ -1,39 +1,319 @@
+/* ---------- Tokens ----------
+   Concrete garage walls, asphalt floors, white paint lines,
+   Israeli plate yellow, blue-white curb (paid parking), red-white curb (full). */
+:root {
+  --concrete: #d6d4ce;
+  --concrete-dark: #b9b6ae;
+  --asphalt: #33363b;
+  --asphalt-light: #3e4248;
+  --paint: #ecebe4;
+  --plate: #f6c21c;
+  --curb-blue: #1d5fc4;
+  --curb-red: #d2322b;
+  --ink: #1c1d20;
+  --muted: #5d5f63;
+  --font: "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+  --font-plate: "Arial Narrow", "Roboto Condensed", "Arial", sans-serif;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; } /* our display:flex rules must not override hidden */
+
 body {
-  font-family: system-ui, Arial, sans-serif;
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 0 16px;
-  background: #f4f6fb;
-  color: #1d2433;
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.5), transparent 60%),
+    var(--concrete);
+  min-height: 100vh;
 }
 
-.cards {
+/* ---------- Curb stripe along the top ---------- */
+.curb {
+  height: 14px;
+  background: repeating-linear-gradient(90deg, var(--curb-blue) 0 48px, #fff 48px 96px);
+  transition: filter 0.3s;
+}
+.curb.full {
+  background: repeating-linear-gradient(90deg, var(--curb-red) 0 48px, #fff 48px 96px);
+}
+
+/* ---------- Header ---------- */
+.top {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 24px 8px;
   display: flex;
-  gap: 16px;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
-.card {
-  flex: 1;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  font-size: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.sign {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  background: var(--curb-blue);
+  color: #fff;
+  font: 800 46px/64px var(--font);
+  text-align: center;
+  border: 3px solid #fff;
+  outline: 2px solid var(--curb-blue);
 }
 
-ul {
-  list-style: none;
-  padding: 0;
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
 }
 
-li {
-  background: white;
+.tagline {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.stats {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 28px;
+  align-items: flex-end;
+}
+
+.stat { display: flex; flex-direction: column; gap: 4px; }
+
+.stat-num b {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-num small { font-size: 1.1rem; color: var(--muted); }
+.stat-label { font-size: 0.85rem; color: var(--muted); max-width: 22ch; }
+
+body.is-full .stat-num b { color: var(--curb-red); }
+
+/* Price meter: three lamps, the current one lights up */
+.meter { display: flex; gap: 4px; direction: ltr; }
+.meter span {
+  min-width: 46px;
+  padding: 6px 0;
+  text-align: center;
+  border-radius: 6px;
+  background: var(--concrete-dark);
+  color: #8b887f;
+  font-weight: 800;
+  font-size: 1.1rem;
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+.meter span.on { background: var(--ink); color: var(--plate); transform: translateY(-3px); }
+
+/* ---------- Gate (the form) ---------- */
+main { max-width: 1080px; margin: 0 auto; padding: 8px 24px 48px; }
+
+.gate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.gate-label { font-weight: 700; }
+
+.hint { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 0.85rem; }
+
+/* Israeli license plate: yellow, black border, blue "IL" strip on the left */
+.plate {
+  display: inline-flex;
+  direction: ltr;
+  align-items: stretch;
+  background: var(--plate);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.plate-il {
+  background: var(--curb-blue);
+  color: #fff;
+  font: 700 0.7rem/1 var(--font);
+  display: flex;
+  align-items: flex-end;
+  padding: 0 4px 4px;
+}
+
+.plate-input input {
+  width: 9.5ch;
+  border: 0;
+  background: transparent;
+  font: 800 1.9rem/1 var(--font-plate);
+  letter-spacing: 0.08em;
+  padding: 8px 10px;
+  color: var(--ink);
+  direction: ltr;
+}
+.plate-input input::placeholder { color: rgba(28, 29, 32, 0.28); }
+.plate-input:focus-within { outline: 3px solid var(--curb-blue); outline-offset: 3px; }
+.plate-input input:focus { outline: none; }
+
+.btn {
+  font: 700 1rem var(--font);
   border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  unicode-bidi: plaintext; /* keeps numbers readable inside Hebrew text */
+  padding: 12px 18px;
+  cursor: pointer;
+  border: 2px solid var(--ink);
+}
+.btn-main { background: var(--ink); color: var(--plate); }
+.btn-main:hover { background: #000; }
+.btn-ghost { background: transparent; color: var(--ink); }
+.btn-ghost:hover { background: rgba(0, 0, 0, 0.06); }
+.btn:focus-visible, .btn-exit:focus-visible { outline: 3px solid var(--curb-blue); outline-offset: 2px; }
+
+/* ---------- Messages ---------- */
+.message {
+  min-height: 1.6em;
+  margin: 14px 0 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding-inline-start: 12px;
+  border-inline-start: 5px solid transparent;
+}
+.message.ok { border-color: #2f8f5b; }
+.message.bye { border-color: var(--curb-blue); }
+.message.bad { border-color: var(--curb-red); color: #8f1d17; }
+.error { color: #8f1d17; font-weight: 700; margin: 6px 0 0; }
+
+/* ---------- The garage map (the star of the page) ---------- */
+.garage {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.error {
-  color: #c62828;
+.floor {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  background: var(--asphalt);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 4px var(--concrete-dark);
+}
+
+.floor-side {
+  padding: 16px;
+  color: var(--paint);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  background: var(--asphalt-light);
+}
+.floor-num { font-size: 1.5rem; font-weight: 800; }
+.floor-joke { font-size: 0.85rem; color: #b8bcc2; line-height: 1.35; }
+
+.floor.ground .floor-side::after {
+  content: "כאן היציאה";
+  margin-top: 6px;
+  align-self: flex-start;
+  background: #2f8f5b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Spots: white paint lines between them, like a real garage */
+.lane {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 14px 10px 0;
+}
+
+.spot {
+  position: relative;
+  min-height: 190px;
+  padding: 8px 10px 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-inline-start: 3px solid var(--paint);
+}
+.spot:first-child { border-inline-start-color: transparent; }
+
+.spot-id {
+  font: 800 1.15rem var(--font);
+  color: rgba(236, 235, 228, 0.35);
+  letter-spacing: 0.04em;
+}
+.spot.taken .spot-id { color: rgba(236, 235, 228, 0.7); }
+
+/* Top-down car drawn with CSS */
+.car { width: 58px; height: 100px; }
+.car-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px 20px 14px 14px;
+  background: var(--car);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35), inset 0 -8px 0 rgba(0, 0, 0, 0.12);
+}
+.car { --car: #d94a3d; }
+.car-glass {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 16px;
+  height: 22px;
+  border-radius: 8px 8px 4px 4px;
+  background: #1b2a3a;
+  opacity: 0.85;
+}
+.car-glass.rear { top: auto; bottom: 12px; height: 14px; border-radius: 4px 4px 8px 8px; }
+
+/* A new car drives in from the lane below */
+.car.arriving { animation: drive-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes drive-in {
+  from { transform: translateY(70px) rotate(-8deg); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.spot-info { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.plate-mini .plate-il { font-size: 0.55rem; padding: 0 3px 2px; }
+.plate-num {
+  font: 800 0.95rem/1 var(--font-plate);
+  padding: 4px 6px;
+  letter-spacing: 0.05em;
+}
+.spot-rate { color: #b8bcc2; font-size: 0.8rem; }
+
+.btn-exit {
+  font: 700 0.85rem var(--font);
+  background: transparent;
+  color: var(--paint);
+  border: 2px solid rgba(236, 235, 228, 0.5);
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.btn-exit:hover { background: var(--paint); color: var(--asphalt); }
+
+/* ---------- Small screens ---------- */
+@media (max-width: 720px) {
+  .stats { margin-inline-start: 0; width: 100%; justify-content: space-between; }
+  .floor { grid-template-columns: 1fr; }
+  .floor-side { flex-direction: row; align-items: baseline; flex-wrap: wrap; }
+  .lane { grid-template-columns: repeat(2, 1fr); }
+  .spot:nth-child(odd) { border-inline-start-color: transparent; }
+  .spot { min-height: 170px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .car.arriving { animation: none; }
+  .meter span { transition: none; }
 }

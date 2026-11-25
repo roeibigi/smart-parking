@@ -2,22 +2,79 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>החניון החכם</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-  <h1>🅿️ החניון החכם</h1>
+  <!-- Blue-white curb = paid parking in Israel. Turns red-white when the lot is full. -->
+  <div class="curb" id="curb" aria-hidden="true"></div>
 
-  <div class="cards">
-    <div class="card">מקומות פנויים: <b id="free">-</b> / <span id="total">-</span></div>
-    <div class="card">מחיר לשעה עכשיו: <b id="price">-</b> ₪</div>
-  </div>
+  <header class="top">
+    <div class="sign" aria-hidden="true">P</div>
+    <div>
+      <h1>החניון החכם</h1>
+      <p class="tagline">המצלמה מזהה את הלוחית, אנחנו מוצאים לך מקום</p>
+    </div>
 
-  <p id="error" class="error"></p>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-num"><b id="free">-</b><small>/<span id="total">-</span></small></span>
+        <span class="stat-label">מקומות פנויים</span>
+      </div>
+      <div class="stat">
+        <div class="meter" id="meter" aria-label="מחיר לשעה">
+          <span data-price="12">12</span><span data-price="18">18</span><span data-price="24">24</span>
+        </div>
+        <span class="stat-label">₪ לשעה עכשיו. מתייקר כשהחניון מתמלא</span>
+      </div>
+    </div>
+  </header>
 
-  <h2>רכבים בחניון</h2>
-  <ul id="cars"></ul>
+  <main>
+    <!-- The gate: type a plate like the IoT camera would read it -->
+    <form class="gate" id="car-form">
+      <label for="plate" class="gate-label">מספר רכב</label>
+      <div class="plate plate-input">
+        <span class="plate-il" aria-hidden="true">IL</span>
+        <input id="plate" inputmode="numeric" maxlength="8" placeholder="1234567" autocomplete="off" aria-describedby="plate-hint">
+      </div>
+      <button type="submit" class="btn btn-main">כניסה / יציאה</button>
+      <button type="button" class="btn btn-ghost" id="random-car">רכב אקראי</button>
+      <p id="plate-hint" class="hint">7 או 8 ספרות. רכב שכבר בפנים ייצא ויקבל חשבון.</p>
+    </form>
 
-  <script src="app.js"></script>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+    <p id="error" class="error" role="alert"></p>
+
+    <!-- The garage map. Floors are drawn top (3) to bottom (1); exit is next to floor 1. -->
+    <section class="garage" id="garage" aria-label="מפת החניון"></section>
+  </main>
+
+  <template id="floor-tpl">
+    <div class="floor">
+      <div class="floor-side">
+        <span class="floor-num"></span>
+        <span class="floor-joke"></span>
+      </div>
+      <div class="lane"></div>
+    </div>
+  </template>
+
+  <template id="spot-tpl">
+    <div class="spot">
+      <span class="spot-id"></span>
+      <div class="car" hidden>
+        <div class="car-body"><span class="car-glass"></span><span class="car-glass rear"></span></div>
+      </div>
+      <div class="spot-info" hidden>
+        <span class="plate plate-mini"><span class="plate-il">IL</span><span class="plate-num"></span></span>
+        <span class="spot-rate"></span>
+        <button type="button" class="btn-exit">הוצא</button>
+      </div>
+    </div>
+  </template>
+
+  <script src="app.js?v=3"></script>
 </body>
 </html>
