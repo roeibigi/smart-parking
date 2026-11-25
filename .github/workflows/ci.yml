@@ -3,6 +3,7 @@ name: CI
 on: [push]
 
 jobs:
+  # ---------- Job 1: build, run and test ----------
   test:
     runs-on: ubuntu-latest
     steps:
@@ -25,3 +26,38 @@ jobs:
       - name: Show logs if something failed
         if: failure()
         run: docker compose logs
+
+  # ---------- Job 2 (bonus): publish the images to GitHub Container Registry ----------
+  publish:
+    needs: test                              # only if all the tests passed
+    if: github.ref == 'refs/heads/main'      # only from the main branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write                        # allow GITHUB_TOKEN to push images to ghcr.io
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Log in to ghcr.io
+        # GITHUB_TOKEN is created automatically for every run and expires when
+        # the run ends: no password is stored anywhere. --password-stdin keeps
+        # it out of the command line and the logs.
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build, tag and push the images
+        run: |
+          # Image names must be lowercase: ${VAR,,} turns a bash variable to lowercase
+          IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}
+          # Automatic version: 1.0.<run number>, grows by 1 on every run
+          VERSION=1.0.${{ github.run_number }}
+
+          for SERVICE in api web; do
+            docker build ./$SERVICE \
+              --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
+              -t $IMAGE-$SERVICE:$VERSION \
+              -t $IMAGE-$SERVICE:latest
+            docker push --all-tags $IMAGE-$SERVICE
+          done
+
+          echo "Published version $VERSION"
